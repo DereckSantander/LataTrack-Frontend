@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:latatrack/views/screens/add_transaction.dart';
 import 'package:latatrack/views/screens/main_screen.dart';
 import 'package:latatrack/views/screens/stats_screen.dart';
 
@@ -53,7 +54,15 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        heroTag: UniqueKey(),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute<void>(
+              builder: (BuildContext context) => const AddTransaction(),
+            ),
+          );
+        },
         shape: const CircleBorder(),
         child: const Icon(CupertinoIcons.add),
       ),

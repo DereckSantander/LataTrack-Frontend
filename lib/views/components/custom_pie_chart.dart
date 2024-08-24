@@ -35,6 +35,7 @@ class CustomPieChart extends StatelessWidget {
                 titleStyle: const TextStyle(fontSize: 15),
                 borderSide: const BorderSide(width: 2),
                 badgeWidget: FloatingActionButton(
+                    heroTag: UniqueKey(),
                     onPressed: () {},
                     mini: true,
                     backgroundColor: const Color.fromARGB(255, 56, 136, 62),
@@ -50,6 +51,7 @@ class CustomPieChart extends StatelessWidget {
                 titleStyle: const TextStyle(fontSize: 15),
                 borderSide: const BorderSide(width: 2),
                 badgeWidget: FloatingActionButton(
+                    heroTag: UniqueKey(),
                     onPressed: () {},
                     mini: true,
                     backgroundColor: const Color.fromARGB(255, 185, 87, 11),

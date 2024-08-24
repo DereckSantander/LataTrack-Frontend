@@ -242,6 +242,7 @@ class _MainScreenState extends State<MainScreen> {
               Container(
                   margin: const EdgeInsets.all(20),
                   child: FloatingActionButton(
+                    heroTag: UniqueKey(),
                     onPressed: () {},
                     child: SvgPicture.asset('assets/icon/filter-list-svgrepo-com.svg', height: 30, width: 30,
                     ),
