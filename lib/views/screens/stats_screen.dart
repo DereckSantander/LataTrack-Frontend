@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../components/segment_button.dart';
-import '../components/transaction_home_row.dart';
+import '../components/transaction_list.dart';
 
 class StatsScreen extends StatefulWidget {
   const StatsScreen({super.key});
@@ -135,8 +135,8 @@ class _StatsScreenState extends State<StatsScreen> {
                   itemCount: ingresosArr.length,
                   itemBuilder: (context, index) {
                     var ingreso = ingresosArr[index] as Map? ?? {};
-                    return TransactionsHomeRow(
-                        transaccion: ingreso, onPressed: () {});
+                    return Text(ingreso['categoria']);//TransactionsHomeRow(
+                        //transaccion: ingreso, onPressed: () {});
                   }),
             if (!isIngresos)
               ListView.builder(
@@ -147,8 +147,8 @@ class _StatsScreenState extends State<StatsScreen> {
                   itemCount: egresosArr.length,
                   itemBuilder: (context, index) {
                     var egreso = egresosArr[index] as Map? ?? {};
-                    return TransactionsHomeRow(
-                        transaccion: egreso, onPressed: () {});
+                    return Text(egreso['categoria']);//TransactionsHomeRow(
+                        //transaccion: egreso, onPressed: () {});
                   }),
           ],
         ),
