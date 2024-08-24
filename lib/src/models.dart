@@ -4,7 +4,7 @@ class Transaction {
   final String description;
   final DateTime created;
   final int categoryId;
-  final int report;
+  final int? report;
 
   Transaction({
     required this.id,
@@ -12,7 +12,7 @@ class Transaction {
     required this.description,
     required this.created,
     required this.categoryId,
-    required this.report,
+    this.report,
   });
 }
 

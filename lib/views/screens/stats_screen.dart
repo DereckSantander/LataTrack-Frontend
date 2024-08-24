@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../services/api_service.dart';
 import '../components/segment_button.dart';
 import '../components/transaction_list.dart';
 
@@ -11,72 +12,9 @@ class StatsScreen extends StatefulWidget {
 }
 
 class _StatsScreenState extends State<StatsScreen> {
+  final ApiService apiService = ApiService('http://192.168.3.167:8000');
   bool isIngresos = true;
-  List ingresosArr = [
-    {
-      "categoria": "Trabajo1",
-      "icono": "city-svgrepo-com",
-      "colorCategoria": Colors.amber,
-      "monto": "800",
-    },
-    {
-      "categoria": "Trabajo2",
-      "icono": "city-svgrepo-com",
-      "colorCategoria": Colors.amber,
-      "monto": "900",
-    },
-    {
-      "categoria": "Inversion1",
-      "icono": "city-svgrepo-com",
-      "colorCategoria": Colors.amber,
-      "monto": "150",
-    },
-    {
-      "categoria": "Inversion2",
-      "icono": "city-svgrepo-com",
-      "colorCategoria": Colors.amber,
-      "monto": "150",
-    },
-    {
-      "categoria": "Cachuelo1",
-      "icono": "city-svgrepo-com",
-      "colorCategoria": Colors.amber,
-      "monto": "100",
-    },
-    {
-      "categoria": "Cachuelo2",
-      "icono": "city-svgrepo-com",
-      "colorCategoria": Colors.amber,
-      "monto": "100",
-    },
-  ];
-
-  List egresosArr = [
-    {
-      "categoria": "Universidad",
-      "icono": "city-svgrepo-com",
-      "colorCategoria": Colors.amber,
-      "monto": "1000",
-    },
-    {
-      "categoria": "Cita medica",
-      "icono": "city-svgrepo-com",
-      "colorCategoria": Colors.amber,
-      "monto": "200",
-    },
-    {
-      "categoria": "Casa",
-      "icono": "city-svgrepo-com",
-      "colorCategoria": Colors.amber,
-      "monto": "300",
-    },
-    {
-      "categoria": "Carro",
-      "icono": "city-svgrepo-com",
-      "colorCategoria": Colors.amber,
-      "monto": "150",
-    },
-  ];
+  
 
   double sumarMontos(List arreglo) {
     double totalMonto = 0.0;
@@ -126,30 +64,11 @@ class _StatsScreenState extends State<StatsScreen> {
                 ],
               ),
             ),
-            if (isIngresos)
-              ListView.builder(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: ingresosArr.length,
-                  itemBuilder: (context, index) {
-                    var ingreso = ingresosArr[index] as Map? ?? {};
-                    return Text(ingreso['categoria']);//TransactionsHomeRow(
-                        //transaccion: ingreso, onPressed: () {});
-                  }),
-            if (!isIngresos)
-              ListView.builder(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: egresosArr.length,
-                  itemBuilder: (context, index) {
-                    var egreso = egresosArr[index] as Map? ?? {};
-                    return Text(egreso['categoria']);//TransactionsHomeRow(
-                        //transaccion: egreso, onPressed: () {});
-                  }),
+            if(isIngresos)
+            TransactionList(apiService: apiService,type: true,filtro: "ingreso",),
+
+            if(!isIngresos)
+            TransactionList(apiService: apiService,type: true,filtro: "gasto",)
           ],
         ),
       ),

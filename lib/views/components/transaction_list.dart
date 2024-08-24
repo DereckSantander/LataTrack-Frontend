@@ -5,11 +5,13 @@ import '../../src/models.dart';
 
 class TransactionList extends StatelessWidget {
   final ApiService apiService;
+  final bool type;
+  final String filtro;
 
-  const TransactionList({super.key, required this.apiService});
+  const TransactionList({super.key, required this.apiService, required this.type, required this.filtro});
 
   Future<List<Map<String, dynamic>>> _fetchAndMapData() async {
-    final transactions = await apiService.fetchTransactions();
+    final transactions = type ? await apiService.fetchTransactionsByType(filtro) : await apiService.fetchTransactions();
     final categories = await apiService.fetchCategories();
 
     return transactions.map((transaction) {

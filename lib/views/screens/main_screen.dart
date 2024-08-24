@@ -105,7 +105,7 @@ class _MainScreenState extends State<MainScreen> {
                   )),
             ],
           ),
-          TransactionList(apiService: apiService,)
+          TransactionList(apiService: apiService,type: false,filtro: "-",)
         ],
       ),
     ));
