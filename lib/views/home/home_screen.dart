@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 CupertinoIcons.house_fill,
                 color: index == 0
                     ? const Color.fromARGB(255, 56, 136, 62)
-                    : Colors.grey,
+                    : const Color(0xFF34495E),
               ),
               label: 'Home',
             ),
@@ -45,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 CupertinoIcons.graph_square_fill,
                 color: index == 1
                     ? const Color.fromARGB(255, 56, 136, 62)
-                    : Colors.grey,
+                    : const Color(0xFF34495E),
               ),
               label: 'Stats',
             ),
