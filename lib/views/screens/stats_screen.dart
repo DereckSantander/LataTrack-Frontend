@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-
 import '../../services/api_service.dart';
 import '../components/segment_button.dart';
 import '../components/transaction_list.dart';
+import 'package:latatrack/globals.dart';
 
 class StatsScreen extends StatefulWidget {
   const StatsScreen({super.key});
@@ -12,9 +12,8 @@ class StatsScreen extends StatefulWidget {
 }
 
 class _StatsScreenState extends State<StatsScreen> {
-  final ApiService apiService = ApiService('http://192.168.3.167:8000');
+  final ApiService apiService = ApiService(ipApi);
   bool isIngresos = true;
-  
 
   double sumarMontos(List arreglo) {
     double totalMonto = 0.0;
@@ -64,11 +63,18 @@ class _StatsScreenState extends State<StatsScreen> {
                 ],
               ),
             ),
-            if(isIngresos)
-            TransactionList(apiService: apiService,type: true,filtro: "ingreso",),
-
-            if(!isIngresos)
-            TransactionList(apiService: apiService,type: true,filtro: "gasto",)
+            if (isIngresos)
+              TransactionList(
+                apiService: apiService,
+                type: true,
+                filtro: "ingreso",
+              ),
+            if (!isIngresos)
+              TransactionList(
+                apiService: apiService,
+                type: true,
+                filtro: "gasto",
+              )
           ],
         ),
       ),

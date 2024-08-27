@@ -32,8 +32,7 @@ class _AddTransactionState extends State<AddTransaction> {
   ];
 
   Map<IconData, String> iconMap = {
-    Icons.food_bank: 'Icons.food_bank',
-    Icons.abc: 'Icons.abc',
+    Icons.airplane_ticket: 'Icons.airplane_ticket',
   };
 
   IconData? miIcono;
@@ -183,6 +182,7 @@ class _AddTransactionState extends State<AddTransaction> {
                                         height: 20,
                                       ),
                                       TextFormField(
+                                        readOnly: true,
                                         onTap: () {
                                           setState(
                                             () {
@@ -252,7 +252,7 @@ class _AddTransactionState extends State<AddTransaction> {
                                               ),
                                             )
                                           : Container(),
-                                      SizedBox(
+                                      const SizedBox(
                                         height: 20,
                                       ),
                                       Row(
@@ -261,6 +261,8 @@ class _AddTransactionState extends State<AddTransaction> {
                                             child: TextButton(
                                               onPressed: () {
                                                 Navigator.pop(ctx);
+                                                print(
+                                                    colorCategoria?.value.toRadixString(16).substring(2).toUpperCase());
                                               },
                                               style: TextButton.styleFrom(
                                                 backgroundColor: Color.fromARGB(255, 33, 49, 64),

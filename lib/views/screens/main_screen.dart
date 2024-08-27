@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:latatrack/views/components/transaction_list.dart';
 import '../../services/api_service.dart';
 import '../components/custom_pie_chart.dart';
+import 'package:latatrack/globals.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -11,8 +12,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final ApiService apiService = ApiService('http://192.168.3.167:8000');
-
+  final ApiService apiService = ApiService(ipApi);
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,8 @@ class _MainScreenState extends State<MainScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  CustomPieChart(apiService: apiService,
+                  CustomPieChart(
+                    apiService: apiService,
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -43,16 +44,13 @@ class _MainScreenState extends State<MainScreen> {
                             alignment: Alignment.center,
                             decoration: const BoxDecoration(
                               color: Color.fromARGB(255, 56, 136, 62),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15)),
+                              borderRadius: BorderRadius.all(Radius.circular(15)),
                             ),
                             child: const Text(
                               "Ingresos",
                               //
                               style: TextStyle(
-                                  color: Color.fromARGB(255, 255, 255, 255),
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w600),
+                                  color: Color.fromARGB(255, 255, 255, 255), fontSize: 20, fontWeight: FontWeight.w600),
                             ),
                           ),
                         ),
@@ -64,16 +62,13 @@ class _MainScreenState extends State<MainScreen> {
                             alignment: Alignment.center,
                             decoration: const BoxDecoration(
                               color: Color.fromARGB(255, 185, 87, 11),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15)),
+                              borderRadius: BorderRadius.all(Radius.circular(15)),
                             ),
                             child: const Text(
                               "Egresos",
                               //
                               style: TextStyle(
-                                  color: Color.fromARGB(255, 255, 255, 255),
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w600),
+                                  color: Color.fromARGB(255, 255, 255, 255), fontSize: 20, fontWeight: FontWeight.w600),
                             ),
                           ),
                         ),
@@ -93,8 +88,7 @@ class _MainScreenState extends State<MainScreen> {
               Container(
                   height: 40,
                   margin: const EdgeInsets.all(20),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                   decoration: const BoxDecoration(
                     color: Color.fromARGB(255, 56, 136, 62),
                     borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -105,7 +99,11 @@ class _MainScreenState extends State<MainScreen> {
                   )),
             ],
           ),
-          TransactionList(apiService: apiService,type: false,filtro: "-",)
+          TransactionList(
+            apiService: apiService,
+            type: false,
+            filtro: "-",
+          )
         ],
       ),
     ));
