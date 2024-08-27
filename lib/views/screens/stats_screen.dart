@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:latatrack/views/screens/report_screen.dart';
 import '../../services/api_service.dart';
 import '../components/segment_button.dart';
 import '../components/transaction_list.dart';
@@ -29,6 +31,31 @@ class _StatsScreenState extends State<StatsScreen> {
       child: SingleChildScrollView(
         child: Column(
           children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Transacciones",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
+                  FloatingActionButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (BuildContext context) =>
+                              const ReportScreen(),
+                        ),
+                      );
+                    },
+                    shape: const CircleBorder(),
+                    child: const Icon(CupertinoIcons.arrow_down_doc_fill),
+                  ),
+                ],
+              ),
+            ),
             Container(
               height: 50,
               margin: const EdgeInsets.all(15),

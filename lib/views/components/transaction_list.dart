@@ -8,10 +8,16 @@ class TransactionList extends StatelessWidget {
   final bool type;
   final String filtro;
 
-  const TransactionList({super.key, required this.apiService, required this.type, required this.filtro});
+  const TransactionList(
+      {super.key,
+      required this.apiService,
+      required this.type,
+      required this.filtro});
 
   Future<List<Map<String, dynamic>>> _fetchAndMapData() async {
-    final transactions = type ? await apiService.fetchTransactionsByType(filtro) : await apiService.fetchTransactions();
+    final transactions = type
+        ? await apiService.fetchTransactionsByType(filtro)
+        : await apiService.fetchTransactions();
     final categories = await apiService.fetchCategories();
 
     return transactions.map((transaction) {
@@ -58,67 +64,119 @@ class TransactionList extends StatelessWidget {
           final transactions = snapshot.data!;
 
           return ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
               itemCount: transactions.length,
               itemBuilder: (context, index) {
                 final transaction = transactions[index];
 
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    height: 64,
-                    decoration: BoxDecoration(
-                      border:
-                          Border.all(color: Colors.black87.withOpacity(0.5)),
-                      color: const Color.fromARGB(188, 192, 213, 195),
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(15)),
-                    ),
-                    alignment: Alignment.center,
-                    child: Row(
-                      children: [
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Container(
-                          height: 50,
-                          width: 50,
-                          decoration: BoxDecoration(
-                              color: Color(int.parse(
-                                  transaction['categoryColor']
-                                      .replaceFirst('#', '0xff'))),
-                              borderRadius: BorderRadius.circular(10)),
-                          child: SvgPicture.asset(
-                              'assets/icon/${transaction['categoryIcon']}.svg'),
-                        ),
-                        const SizedBox(
-                          height: 8,
-                          width: 10,
-                        ),
-                        Expanded(
-                          child: Text(
-                            transaction['categoryName'],
+                return GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Detalle de transaccion'),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Categoría: ${transaction['categoryName']}',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Descripcion: ${transaction['description']}',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Monto: \$${transaction['amount']}',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Close'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      height: 64,
+                      decoration: BoxDecoration(
+                        border:
+                            Border.all(color: Colors.black87.withOpacity(0.5)),
+                        color: const Color.fromARGB(188, 192, 213, 195),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(15)),
+                      ),
+                      alignment: Alignment.center,
+                      child: Row(
+                        children: [
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Container(
+                            height: 50,
+                            width: 50,
+                            decoration: BoxDecoration(
+                                color: Color(int.parse(
+                                    transaction['categoryColor']
+                                        .replaceFirst('#', '0xff'))),
+                                borderRadius: BorderRadius.circular(10)),
+                            child: SvgPicture.asset(
+                                'assets/icon/${transaction['categoryIcon']}.svg'),
+                          ),
+                          const SizedBox(
+                            height: 8,
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: Text(
+                              transaction['categoryName'],
+                              style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            "\$" + transaction['amount'],
                             style: const TextStyle(
                                 color: Colors.black,
                                 fontSize: 20,
                                 fontWeight: FontWeight.w600),
                           ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          "\$" + transaction['amount'],
-                          style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                      ],
+                          const SizedBox(
+                            width: 10,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
