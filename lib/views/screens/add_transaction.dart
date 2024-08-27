@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:latatrack/globals.dart';
+import 'package:latatrack/services/api_service.dart';
+import 'package:latatrack/src/models.dart';
+import 'package:intl/intl.dart';
 
 class AddTransaction extends StatefulWidget {
   const AddTransaction({super.key});
@@ -9,10 +13,14 @@ class AddTransaction extends StatefulWidget {
 }
 
 class _AddTransactionState extends State<AddTransaction> {
-  TextEditingController categoriaController = TextEditingController();
+  final ApiService apiService = ApiService(ipApi);
+
+  static TextEditingController categoriaController = TextEditingController();
   TextEditingController montoController = TextEditingController();
   TextEditingController descripcionController = TextEditingController();
   TextEditingController fechaController = TextEditingController();
+
+  TextEditingController nombreNuevaCategoriaController = TextEditingController();
   late DateTime fechaEscogida;
 
   List<Color> listaColores = [
@@ -25,27 +33,51 @@ class _AddTransactionState extends State<AddTransaction> {
     Colors.brown,
     Colors.pink,
   ];
-
-  List<IconData> listaIconos = [
-    Icons.food_bank,
-    Icons.abc,
-  ];
-
-  Map<IconData, String> iconMap = {
+  //Nueva categoria
+  Map<IconData, String> iconosDisponibles = {
+    Icons.shopping_cart: 'Icons.shopping_cart',
+    Icons.directions_car: "Icons.directions_car",
+    Icons.home: "Icons.home",
+    Icons.movie: "Icons.movie",
+    Icons.local_hospital: "Icons.local_hospital",
     Icons.airplane_ticket: 'Icons.airplane_ticket',
+    Icons.school: "Icons.school",
+    Icons.beach_access: "Icons.beach_access",
+    Icons.savings: "Icons.savings",
+    Icons.attach_money: "Icons.attach_money"
   };
+
+  IconData fromString(String iconoBuscado) {
+    for (final entry in iconosDisponibles.entries) {
+      if (entry.value == iconoBuscado) {
+        return entry.key;
+      }
+    }
+    return Icons.error;
+  }
 
   IconData? miIcono;
   String? selectedIconName;
-  Color? colorCategoria;
+  Color? colorCategoriaNueva;
 
   IconData? iconoCategoriaEscogida;
-  bool mostrarCategorias = true;
+  static bool mostrarCategorias = false;
 
-  Map<String, String> iconosCargados = {
-    "Icons.food_bank": "#00000", // black
-    "Icons.abc": "#FF0000" // red
-  };
+  Future<List<Category>>? categoriasFuture;
+  String filtroCategorias = "";
+
+  Category? categoriaEscogida;
+
+  void updateCategorias(String tipo) {
+    setState(
+      () {
+        filtroCategorias = tipo;
+        categoriaController.text = "";
+        mostrarCategorias = true;
+        categoriasFuture = apiService.fetchCategoriesByType(tipo);
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +98,10 @@ class _AddTransactionState extends State<AddTransaction> {
               const SizedBox(
                 height: 20,
               ),
-              IngresoEgresoButtons(),
+              IngresoEgresoButtons(
+                onIngresoSelected: () => updateCategorias("ingreso"),
+                onEgresoSelected: () => updateCategorias("gasto"),
+              ),
               const SizedBox(
                 height: 20,
               ),
@@ -75,6 +110,10 @@ class _AddTransactionState extends State<AddTransaction> {
                 onTap: () {
                   setState(() {
                     mostrarCategorias = !mostrarCategorias;
+                    categoriasFuture = apiService.fetchCategoriesByType(filtroCategorias);
+                    montoController.text = "";
+                    descripcionController.text = "";
+                    fechaController.text = "";
                   });
                 },
                 controller: categoriaController,
@@ -108,6 +147,7 @@ class _AddTransactionState extends State<AddTransaction> {
                                       SizedBox(
                                         width: MediaQuery.of(context).size.width,
                                         child: TextFormField(
+                                          controller: nombreNuevaCategoriaController,
                                           decoration: InputDecoration(
                                             isDense: true,
                                             filled: true,
@@ -134,11 +174,11 @@ class _AddTransactionState extends State<AddTransaction> {
                                                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                                       ),
                                                       BlockPicker(
-                                                        pickerColor: colorCategoria,
+                                                        pickerColor: colorCategoriaNueva,
                                                         onColorChanged: (value) {
                                                           setState(
                                                             () {
-                                                              colorCategoria = value;
+                                                              colorCategoriaNueva = value;
                                                             },
                                                           );
                                                         },
@@ -170,7 +210,7 @@ class _AddTransactionState extends State<AddTransaction> {
                                         decoration: InputDecoration(
                                           suffixIcon: Icon(
                                             Icons.circle,
-                                            color: colorCategoria,
+                                            color: colorCategoriaNueva,
                                           ),
                                           isDense: true,
                                           filled: true,
@@ -215,21 +255,22 @@ class _AddTransactionState extends State<AddTransaction> {
                                               child: GridView.builder(
                                                 gridDelegate:
                                                     const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
-                                                itemCount: listaIconos.length,
+                                                itemCount: iconosDisponibles.length,
                                                 itemBuilder: (context, int i) {
                                                   return GestureDetector(
                                                     onTap: () {
                                                       setState(() {
-                                                        miIcono = listaIconos[i];
-                                                        selectedIconName = iconMap[miIcono];
+                                                        miIcono = iconosDisponibles.keys.toList()[i];
+                                                        selectedIconName = iconosDisponibles[miIcono];
                                                         print(selectedIconName);
                                                       });
                                                     },
                                                     child: Container(
                                                       padding: const EdgeInsets.all(1.0),
                                                       decoration: BoxDecoration(
-                                                        color:
-                                                            miIcono == listaIconos[i] ? colorCategoria : Colors.white,
+                                                        color: miIcono == iconosDisponibles.keys.toList()[i]
+                                                            ? colorCategoriaNueva
+                                                            : Colors.white,
                                                         borderRadius: BorderRadius.circular(10),
                                                         boxShadow: [
                                                           BoxShadow(
@@ -242,7 +283,7 @@ class _AddTransactionState extends State<AddTransaction> {
                                                       margin:
                                                           const EdgeInsets.symmetric(vertical: 2.0, horizontal: 4.0),
                                                       child: Icon(
-                                                        listaIconos[i],
+                                                        iconosDisponibles.keys.toList()[i],
                                                         size: 40,
                                                         color: Colors.black,
                                                       ),
@@ -259,10 +300,15 @@ class _AddTransactionState extends State<AddTransaction> {
                                         children: [
                                           Expanded(
                                             child: TextButton(
-                                              onPressed: () {
+                                              onPressed: () async {
                                                 Navigator.pop(ctx);
-                                                print(
-                                                    colorCategoria?.value.toRadixString(16).substring(2).toUpperCase());
+                                                String colorNuevo =
+                                                    "#${colorCategoriaNueva!.value.toRadixString(16).substring(2).toUpperCase()}";
+                                                await apiService.createCategory(
+                                                    nombreNuevaCategoriaController.text,
+                                                    isIngresoSelected && !isEgresoSelected ? "ingreso" : "gasto",
+                                                    colorNuevo,
+                                                    selectedIconName!);
                                               },
                                               style: TextButton.styleFrom(
                                                 backgroundColor: Color.fromARGB(255, 33, 49, 64),
@@ -286,58 +332,47 @@ class _AddTransactionState extends State<AddTransaction> {
                   hintText: "Categoría",
                 ),
               ),
-              mostrarCategorias
-                  ? Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: 200,
-                      decoration: const BoxDecoration(
-                        color: Color.fromARGB(255, 33, 49, 64),
-                        borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
-                      ),
-                      child: GridView.builder(
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 5,
+              if (mostrarCategorias)
+                FutureBuilder<List<Category>>(
+                  future: categoriasFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(child: Text('No hay categorías disponibles.'));
+                    } else {
+                      final categorias = snapshot.data!;
+                      return Expanded(
+                        child: ListView.builder(
+                          itemCount: categorias.length,
+                          itemBuilder: (context, index) {
+                            final categoria = categorias[index];
+                            return ListTile(
+                              title: Text(categoria.name),
+                              onTap: () {
+                                setState(() {
+                                  categoriaController.text = categoria.name;
+                                  categoriaEscogida = categoria;
+                                });
+                              },
+                              leading: Container(
+                                decoration: BoxDecoration(
+                                  color: ColorHelper.fromHex(categoria.color),
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                padding: EdgeInsets.all(8),
+                                child: Icon(fromString(categoria.icono), color: Colors.black),
+                              ),
+                            );
+                          },
                         ),
-                        itemCount: iconosCargados.length,
-                        itemBuilder: (context, int i) {
-                          String iconName = listaIconos[i].toString();
-                          String iconColorHex = iconosCargados[iconName] ?? "#FFFFFF"; // Default to white if not found
-                          // Convert the hex color string to a Color object
-                          Color iconColor = Color(int.parse(iconColorHex.replaceFirst('#', '0xFF')));
-
-                          return GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                iconoCategoriaEscogida = listaIconos[i];
-                                selectedIconName = iconName;
-                              });
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(1.0),
-                              decoration: BoxDecoration(
-                                color: iconoCategoriaEscogida == listaIconos[i] ? Colors.red : iconColor,
-                                //miIcono == listaIconos[i]? Colors.red: Colors.white
-                                borderRadius: BorderRadius.circular(10),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
-                                    spreadRadius: 2,
-                                    blurRadius: 5,
-                                  ),
-                                ],
-                              ),
-                              margin: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 4.0),
-                              child: Icon(
-                                listaIconos[i],
-                                size: 40,
-                                color: Colors.black, // Use the color from the map
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    )
-                  : Container(),
+                      );
+                    }
+                  },
+                ),
               const SizedBox(
                 height: 20,
               ),
@@ -406,7 +441,11 @@ class _AddTransactionState extends State<AddTransaction> {
                             backgroundColor: Color.fromARGB(255, 33, 49, 64),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            print(fechaEscogida);
+                            apiService.createTransaction(double.parse(montoController.text), descripcionController.text,
+                                categoriaEscogida!.id, DateFormat('yyyy-MM-dd HH:mm:ss.SSSSSS').format(fechaEscogida));
+                          },
                           child: const Text(
                             "Guardar",
                             style: TextStyle(fontSize: 20, color: Colors.white),
@@ -424,14 +463,20 @@ class _AddTransactionState extends State<AddTransaction> {
 }
 
 class IngresoEgresoButtons extends StatefulWidget {
+  final VoidCallback onIngresoSelected;
+  final VoidCallback onEgresoSelected;
+
+  const IngresoEgresoButtons({
+    Key? key,
+    required this.onIngresoSelected,
+    required this.onEgresoSelected,
+  }) : super(key: key);
+
   @override
   _IngresoEgresoButtonsState createState() => _IngresoEgresoButtonsState();
 }
 
 class _IngresoEgresoButtonsState extends State<IngresoEgresoButtons> {
-  bool isIngresoSelected = false;
-  bool isEgresoSelected = false;
-
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -452,6 +497,7 @@ class _IngresoEgresoButtonsState extends State<IngresoEgresoButtons> {
                 isIngresoSelected = true;
                 isEgresoSelected = false;
               });
+              widget.onIngresoSelected();
             },
             child: const Text("Ingreso"),
           ),
@@ -473,11 +519,22 @@ class _IngresoEgresoButtonsState extends State<IngresoEgresoButtons> {
                 isIngresoSelected = false;
                 isEgresoSelected = true;
               });
+              widget.onEgresoSelected();
             },
             child: const Text("Egreso"),
           ),
         ),
       ],
     );
+  }
+}
+
+class ColorHelper {
+  // Función para convertir un string hexadecimal en un Color
+  static Color fromHex(String hexString) {
+    final buffer = StringBuffer();
+    if (hexString.length == 7) buffer.write('ff'); // Si es un código de color hexadecimal (sin alfa)
+    buffer.write(hexString.replaceAll('#', ''));
+    return Color(int.parse(buffer.toString(), radix: 16));
   }
 }
