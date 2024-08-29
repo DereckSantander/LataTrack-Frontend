@@ -4,6 +4,7 @@ import 'package:latatrack/globals.dart';
 import 'package:latatrack/services/api_service.dart';
 import 'package:latatrack/src/models.dart';
 import 'package:intl/intl.dart';
+import 'package:latatrack/src/Categorias.dart';
 
 class AddTransaction extends StatefulWidget {
   const AddTransaction({super.key});
@@ -33,28 +34,6 @@ class _AddTransactionState extends State<AddTransaction> {
     Colors.brown,
     Colors.pink,
   ];
-  //Nueva categoria
-  Map<IconData, String> iconosDisponibles = {
-    Icons.shopping_cart: 'Icons.shopping_cart',
-    Icons.directions_car: "Icons.directions_car",
-    Icons.home: "Icons.home",
-    Icons.movie: "Icons.movie",
-    Icons.local_hospital: "Icons.local_hospital",
-    Icons.airplane_ticket: 'Icons.airplane_ticket',
-    Icons.school: "Icons.school",
-    Icons.beach_access: "Icons.beach_access",
-    Icons.savings: "Icons.savings",
-    Icons.attach_money: "Icons.attach_money"
-  };
-
-  IconData fromString(String iconoBuscado) {
-    for (final entry in iconosDisponibles.entries) {
-      if (entry.value == iconoBuscado) {
-        return entry.key;
-      }
-    }
-    return Icons.error;
-  }
 
   IconData? miIcono;
   String? selectedIconName;
@@ -255,20 +234,20 @@ class _AddTransactionState extends State<AddTransaction> {
                                               child: GridView.builder(
                                                 gridDelegate:
                                                     const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
-                                                itemCount: iconosDisponibles.length,
+                                                itemCount: Categorias.iconosDisponibles.length,
                                                 itemBuilder: (context, int i) {
                                                   return GestureDetector(
                                                     onTap: () {
                                                       setState(() {
-                                                        miIcono = iconosDisponibles.keys.toList()[i];
-                                                        selectedIconName = iconosDisponibles[miIcono];
+                                                        miIcono = Categorias.iconosDisponibles.keys.toList()[i];
+                                                        selectedIconName = Categorias.iconosDisponibles[miIcono];
                                                         print(selectedIconName);
                                                       });
                                                     },
                                                     child: Container(
                                                       padding: const EdgeInsets.all(1.0),
                                                       decoration: BoxDecoration(
-                                                        color: miIcono == iconosDisponibles.keys.toList()[i]
+                                                        color: miIcono == Categorias.iconosDisponibles.keys.toList()[i]
                                                             ? colorCategoriaNueva
                                                             : Colors.white,
                                                         borderRadius: BorderRadius.circular(10),
@@ -283,7 +262,7 @@ class _AddTransactionState extends State<AddTransaction> {
                                                       margin:
                                                           const EdgeInsets.symmetric(vertical: 2.0, horizontal: 4.0),
                                                       child: Icon(
-                                                        iconosDisponibles.keys.toList()[i],
+                                                        Categorias.iconosDisponibles.keys.toList()[i],
                                                         size: 40,
                                                         color: Colors.black,
                                                       ),
@@ -364,7 +343,7 @@ class _AddTransactionState extends State<AddTransaction> {
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 padding: EdgeInsets.all(8),
-                                child: Icon(fromString(categoria.icono), color: Colors.black),
+                                child: Icon(Categorias.fromString(categoria.icono), color: Colors.black),
                               ),
                             );
                           },
@@ -530,7 +509,6 @@ class _IngresoEgresoButtonsState extends State<IngresoEgresoButtons> {
 }
 
 class ColorHelper {
-  // Función para convertir un string hexadecimal en un Color
   static Color fromHex(String hexString) {
     final buffer = StringBuffer();
     if (hexString.length == 7) buffer.write('ff'); // Si es un código de color hexadecimal (sin alfa)

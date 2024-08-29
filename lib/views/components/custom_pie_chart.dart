@@ -8,7 +8,8 @@ class CustomPieChart extends StatelessWidget {
   final ApiService apiService;
 
   const CustomPieChart({
-    super.key, required this.apiService,
+    super.key,
+    required this.apiService,
   });
 
   static var totalIngresos = 0.0;
@@ -29,23 +30,18 @@ class CustomPieChart extends StatelessWidget {
     final categories = await apiService.fetchCategories();
 
     totalIngresos = transactionsI
-      .map((transaction) => double.tryParse(transaction.amount) ?? 0.0)
-      .fold(0.0, (sum, amount) => sum + amount);
+        .map((transaction) => double.tryParse(transaction.amount) ?? 0.0)
+        .fold(0.0, (sum, amount) => sum + amount);
 
     totalEgresos = transactionsE
-      .map((transaction) => double.tryParse(transaction.amount) ?? 0.0)
-      .fold(0.0, (sum, amount) => sum + amount);
+        .map((transaction) => double.tryParse(transaction.amount) ?? 0.0)
+        .fold(0.0, (sum, amount) => sum + amount);
 
     return transactions.map((transaction) {
       final category = categories.firstWhere(
         (cat) => cat.id == transaction.categoryId,
         orElse: () => Category(
-            id: -1,
-            name: 'Unknown',
-            type: 'Unknown',
-            color: '#FFFFFF',
-            icono: 'unknown',
-            created: DateTime.now()),
+            id: -1, name: 'Unknown', type: 'Unknown', color: '#FFFFFF', icono: 'unknown', created: DateTime.now()),
       );
 
       return {
@@ -75,47 +71,33 @@ class CustomPieChart extends StatelessWidget {
 
           final transactions = snapshot.data!;
 
-          
           return AspectRatio(
-      aspectRatio: 1.2,
-      child: Container(
-        margin: const EdgeInsets.all(20),
-        child: PieChart(
-          PieChartData(sections: [
-            PieChartSectionData(
-                value: totalIngresos,
-                color: const Color.fromARGB(255, 56, 136, 62),
-                radius: 60,
-                titleStyle: const TextStyle(fontSize: 15),
-                borderSide: const BorderSide(width: 2),
-                badgeWidget: FloatingActionButton(
-                    heroTag: UniqueKey(),
-                    onPressed: () {},
-                    mini: true,
-                    backgroundColor: const Color.fromARGB(255, 56, 136, 62),
-                    shape: const CircleBorder(),
-                    child: const Icon(CupertinoIcons.bag_fill_badge_plus)),
-                titlePositionPercentageOffset: 0.4,
-                badgePositionPercentageOffset: 1,
+            aspectRatio: 1.2,
+            child: Container(
+              margin: const EdgeInsets.all(20),
+              child: PieChart(
+                PieChartData(sections: [
+                  PieChartSectionData(
+                    value: totalIngresos,
+                    color: const Color.fromARGB(255, 56, 136, 62),
+                    radius: 60,
+                    titleStyle: const TextStyle(fontSize: 15),
+                    borderSide: const BorderSide(width: 2),
+                    titlePositionPercentageOffset: 0.4,
+                    badgePositionPercentageOffset: 1,
+                  ),
+                  PieChartSectionData(
+                      value: totalEgresos,
+                      color: const Color.fromARGB(255, 185, 87, 11),
+                      radius: 55,
+                      titleStyle: const TextStyle(fontSize: 15),
+                      borderSide: const BorderSide(width: 2),
+                      titlePositionPercentageOffset: 0.4,
+                      badgePositionPercentageOffset: 1),
+                ]),
+              ),
             ),
-            PieChartSectionData(
-                value: totalEgresos,
-                color: const Color.fromARGB(255, 185, 87, 11),
-                radius: 55,
-                titleStyle: const TextStyle(fontSize: 15),
-                borderSide: const BorderSide(width: 2),
-                badgeWidget: FloatingActionButton(
-                    heroTag: UniqueKey(),
-                    onPressed: () {},
-                    mini: true,
-                    backgroundColor: const Color.fromARGB(255, 185, 87, 11),
-                    shape: const CircleBorder(),
-                    child: const Icon(CupertinoIcons.bag_fill_badge_minus)),
-                titlePositionPercentageOffset: 0.4,
-                badgePositionPercentageOffset: 1),
-          ]),
-        ),
-      ),
-    );
-  });
-}}
+          );
+        });
+  }
+}
